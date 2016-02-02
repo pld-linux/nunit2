@@ -1,3 +1,4 @@
+%include	/usr/lib/rpm/macros.mono
 Summary:	Unit test framework for CLI
 Summary(pl.UTF-8):	Szkielet testów jednostkowych dla CLI
 Name:		nunit2
@@ -13,7 +14,9 @@ Source3:	%{name}-console.sh
 Source4:	%{name}.desktop
 URL:		http://www.nunit.org/
 BuildRequires:	libgdiplus
-BuildRequires:	mono-devel
+BuildRequires:	mono-devel >= 4.0
+BuildRequires:	rpmbuild(monoautodeps)
+Requires:	dotnet-nunit2 = %{version}-%{release}
 Obsoletes:	nunit-runner
 ExclusiveArch:	%{ix86} %{x8664} arm aarch64 ia64 mips ppc ppc64 s390x sparc sparcv9 sparc64
 ExcludeArch:	i386
@@ -49,18 +52,6 @@ Desktop application for run NUnit test.
 %description gui -l pl.UTF-8
 Graficzna aplikacja do uruchamiania testów NUnit.
 
-%package devel
-Summary:	Development files for NUnit 2.x
-Summary(pl.UTF-8):	Pliki programistyczne pakietu NUnit 2.x
-Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
-
-%description devel
-Development files for NUnit 2.x.
-
-%description devel -l pl.UTF-8
-Pliki programistyczne pakietu NUnit 2.x.
-
 %package doc
 Summary:	Documentation for NUnit 2.x
 Summary(pl.UTF-8):	Dokumentacja do pakietu NUnit 2.x
@@ -72,6 +63,32 @@ Documentation for NUnit 2.x.
 
 %description doc -l pl.UTF-8
 Dokumentacja do pakietu NUnit 2.x.
+
+%package -n dotnet-nunit2
+Summary:	NUnit 2.x library for .NET
+Summary(pl.UTF-8):	Biblioteka NUnit 2.x dla .NET
+Group:		Libraries
+Requires:	mono >= 4.0
+
+%description -n dotnet-nunit2
+NUnit 2.x library for .NET.
+
+%description -n dotnet-nunit2 -l pl.UTF-8
+Biblioteka NUnit 2.x dla .NET.
+
+%package -n dotnet-nunit2-devel
+Summary:	Development files for NUnit 2.x
+Summary(pl.UTF-8):	Pliki programistyczne pakietu NUnit 2.x
+Group:		Development/Libraries
+Requires:	dotnet-nunit2 = %{version}-%{release}
+Requires:	mono-devel >= 4.0
+Obsoletes:	nunit2-devel
+
+%description -n dotnet-nunit2-devel
+Development files for NUnit 2.x.
+
+%description -n dotnet-nunit2-devel -l pl.UTF-8
+Pliki programistyczne pakietu NUnit 2.x.
 
 %prep
 %setup -q -n nunitv2-%{version}
@@ -122,29 +139,40 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README.md license.txt 
 %attr(755,root,root) %{_bindir}/nunit-console26
-%dir %{_prefix}/lib/mono/nunit2
 %{_prefix}/lib/mono/nunit2/nunit-console.exe
 %{_prefix}/lib/mono/nunit2/nunit-console.exe.config
-%{_prefix}/lib/mono/nunit2/*.dll
-%{_prefix}/lib/mono/gac/nunit-console-runner
-%{_prefix}/lib/mono/gac/nunit.core
-%{_prefix}/lib/mono/gac/nunit.core.interfaces
-%{_prefix}/lib/mono/gac/nunit.framework
-%{_prefix}/lib/mono/gac/nunit.mocks
-%{_prefix}/lib/mono/gac/nunit.util
 
 %files gui
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/nunit-gui26
 %{_prefix}/lib/mono/nunit2/nunit.exe
 %{_prefix}/lib/mono/nunit2/nunit.exe.config
+%{_prefix}/lib/mono/nunit2/nunit-gui-runner.dll
 %{_desktopdir}/nunit2.desktop
 %{_pixmapsdir}/nunit2.ico
-
-%files devel
-%defattr(644,root,root,755)
-%{_pkgconfigdir}/nunit2.pc
 
 %files doc
 %defattr(644,root,root,755)
 %doc doc/*
+
+%files -n dotnet-nunit2
+%defattr(644,root,root,755)
+%{_prefix}/lib/mono/gac/nunit-console-runner
+%{_prefix}/lib/mono/gac/nunit.core
+%{_prefix}/lib/mono/gac/nunit.core.interfaces
+%{_prefix}/lib/mono/gac/nunit.framework
+%{_prefix}/lib/mono/gac/nunit.mocks
+%{_prefix}/lib/mono/gac/nunit.util
+%dir %{_prefix}/lib/mono/nunit2
+%{_prefix}/lib/mono/nunit2/nunit-console-runner.dll
+%{_prefix}/lib/mono/nunit2/nunit.core.dll
+%{_prefix}/lib/mono/nunit2/nunit.core.interfaces.dll
+%{_prefix}/lib/mono/nunit2/nunit.framework.dll
+%{_prefix}/lib/mono/nunit2/nunit.mocks.dll
+%{_prefix}/lib/mono/nunit2/nunit.uiexception.dll
+%{_prefix}/lib/mono/nunit2/nunit.uikit.dll
+%{_prefix}/lib/mono/nunit2/nunit.util.dll
+
+%files -n dotnet-nunit2-devel
+%defattr(644,root,root,755)
+%{_pkgconfigdir}/nunit2.pc
