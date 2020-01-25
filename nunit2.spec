@@ -1,4 +1,3 @@
-%include	/usr/lib/rpm/macros.mono
 Summary:	Unit test framework for CLI
 Summary(pl.UTF-8):	Szkielet testów jednostkowych dla CLI
 Name:		nunit2
